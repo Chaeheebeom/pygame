@@ -26,26 +26,33 @@ class GameMaster:
 
     def on_init(self):
         pg.init()
+        #처음세팅.
+        self.init_background()
+        self.init_objects()
+        self.initMusic('music\\rainbownote-line1.mp3')
+
+        self._running = True
+
+    #배경화면 초기화
+    def init_background(self):
         self._display_surf = pg.display.set_mode(DISPLAY, pg.HWSURFACE | pg.DOUBLEBUF)
         pg.display.set_caption("welcome")
-
+        # 배경이미지.
         self.background = pg.image.load("image/background.jpg")
         self.background2 = self.background.copy()
         self.background1_x = 0
         self.background2_x = DISPLAY_WIDTH
-
         self._display_surf.blit(self.background, (0, 0))
 
+    #오브젝트초기화
+    def init_objects(self):
         self.player1 = Player.Player(self._display_surf)
         self.missile = Missile.Missile(self._display_surf)
 
         self.playerSprites = pg.sprite.RenderPlain(self.player1)
         self.missileSprites = pg.sprite.RenderPlain(self.missile)
 
-        self._running = True
-        #음악틀어주기
-        self.playmusic('music\\rainbownote-line1.mp3')
-
+    #화면 움직이기
     def draw_background(self):
         self.background1_x-=2
         self.background2_x-=2
@@ -58,6 +65,7 @@ class GameMaster:
         self._display_surf.blit(self.background, (self.background1_x, 0))
         self._display_surf.blit(self.background2, (self.background2_x, 0))
 
+    #화면에 오브젝트 그리기
     def draw_objects(self):
         self._display_surf.blit(self._display_surf, self.player1.rect, self.player1.rect)
         self.playerSprites.update()
@@ -75,6 +83,14 @@ class GameMaster:
 
     def deleteMissile(self):
         self.missileSprites.remove(self.missile)
+
+    #음악재생
+    def initMusic(self,soundfile):
+        pg.mixer.init()
+        pg.mixer.music.load(soundfile)
+        pg.mixer.music.set_volume(1.0)
+        #-1반복재생
+        pg.mixer.music.play(-1)
 
     def on_event(self, event):
         if event.type == pg.QUIT:
@@ -111,14 +127,6 @@ class GameMaster:
     def on_cleanup(self):
         pg.quit()
 
-    def playmusic(self,soundfile):
-        pg.mixer.init()
-        pg.mixer.music.load(soundfile)
-        pg.mixer.music.set_volume(1.0)
-        #-1반복재생
-        pg.mixer.music.play(-1)
-
-
     def on_execute(self):
         if self.on_init() == False:
             self._running = False
@@ -133,7 +141,10 @@ class GameMaster:
         self.on_cleanup()
 
 
-if __name__ == '__main__':
+def main():
     gm = GameMaster()
     gm.on_execute()
+
+if __name__ == '__main__':
+    main()
 
