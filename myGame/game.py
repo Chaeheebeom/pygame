@@ -16,6 +16,7 @@ WHITE = 255, 255, 255  # 하얀색: 적 255, 녹 255, 청 255
 DISPLAY_WIDTH = 1000
 DISPLAY_HEIGHT = 600
 DISPLAY = (DISPLAY_WIDTH,DISPLAY_HEIGHT)
+MUSIC_END_EVENT = 0
 
 class GameMaster:
     def __init__(self):
@@ -113,7 +114,10 @@ class GameMaster:
     def playmusic(self,soundfile):
         pg.mixer.init()
         pg.mixer.music.load(soundfile)
-        pg.mixer.music.play()
+        pg.mixer.music.set_volume(1.0)
+        #-1반복재생
+        pg.mixer.music.play(-1)
+
 
     def on_execute(self):
         if self.on_init() == False:
