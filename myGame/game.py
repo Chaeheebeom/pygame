@@ -4,7 +4,9 @@ import common
 
 import Player
 import Missile
+import Enemy
 
+###색깔들.###
 RED = 255, 0, 0        # 적색:   적 255, 녹   0, 청   0
 GREEN = 0, 255, 0      # 녹색:   적   0, 녹 255, 청   0
 BLUE = 0, 0, 255       # 청색:   적   0, 녹   0, 청 255
@@ -12,11 +14,12 @@ PURPLE = 127, 0, 127   # 보라색: 적 127, 녹   0, 청 127
 BLACK = 0, 0, 0        # 검은색: 적   0, 녹   0, 청   0
 GRAY = 127, 127, 127   # 회색:   적 127, 녹 127, 청 127
 WHITE = 255, 255, 255  # 하얀색: 적 255, 녹 255, 청 255
-
+#####
+###화면크기###
 DISPLAY_WIDTH = 1000
 DISPLAY_HEIGHT = 600
 DISPLAY = (DISPLAY_WIDTH,DISPLAY_HEIGHT)
-MUSIC_END_EVENT = 0
+######
 
 class GameMaster:
     def __init__(self):
@@ -52,6 +55,9 @@ class GameMaster:
         self.playerSprites = pg.sprite.RenderPlain(self.player1)
         self.missileSprites = pg.sprite.RenderPlain(self.missile)
 
+        self.enemy= Enemy.Enemy(self._display_surf)
+        self.enemySprites = pg.sprite.RenderPlain(self.enemy)
+
     #화면 움직이기
     def draw_background(self):
         self.background1_x-=2
@@ -75,11 +81,18 @@ class GameMaster:
         self.missileSprites.update()
         self.missileSprites.draw(self._display_surf)
 
+        self._display_surf.blit(self._display_surf, self.enemy.rect, self.enemy.rect)
+        self.enemySprites.update()
+        self.enemySprites.draw(self._display_surf)
+
     def movePlayer(self):
         self.player1.move()
 
     def moveMissile(self):
         self.missile.moveMissile()
+
+    def moveEnemy(self):
+        self.enemy.moveEnemy()
 
     def deleteMissile(self):
         self.missileSprites.remove(self.missile)
@@ -118,6 +131,7 @@ class GameMaster:
     def on_loop(self):
         self.movePlayer()
         self.moveMissile()
+        self.moveEnemy()
 
     def on_render(self):
         self.draw_background()
