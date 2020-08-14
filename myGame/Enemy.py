@@ -27,3 +27,6 @@ class Enemy(ps.Sprite):
         if self.area.contains(newpos):
             self.rect = newpos
         pg.event.pump()
+
+    def attackPlayer(self,playerRect):
+        pass

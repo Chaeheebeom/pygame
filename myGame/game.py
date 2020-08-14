@@ -50,9 +50,9 @@ class GameMaster:
     #오브젝트초기화
     def init_objects(self):
         self.player1 = Player.Player(self._display_surf)
-        self.missile = Missile.Missile(self._display_surf)
-
         self.playerSprites = pg.sprite.RenderPlain(self.player1)
+
+        self.missile = Missile.Missile(self._display_surf)
         self.missileSprites = pg.sprite.RenderPlain(self.missile)
 
         self.enemy= Enemy.Enemy(self._display_surf)
@@ -89,13 +89,19 @@ class GameMaster:
         self.player1.move()
 
     def moveMissile(self):
-        self.missile.moveMissile()
+        for missile in self.missileSprites.sprites():
+            missile.moveMissile()
 
     def moveEnemy(self):
         self.enemy.moveEnemy()
 
     def deleteMissile(self):
         self.missileSprites.remove(self.missile)
+
+    APMMaximum = 4
+    attackPlayerMissiles = 0
+    def attackPlayer(self,playerRect):
+        self.enemy.attackPlayer(playerRect)
 
     #음악재생
     def initMusic(self,soundfile):
@@ -119,7 +125,12 @@ class GameMaster:
             if event.key == pg.K_RIGHT:
                 self.player1.moveright()
             if event.key == pg.K_SPACE:
-                self.missile.fire(self.player1.rect)
+                missile = Missile.Missile(self._display_surf)
+                self._display_surf.blit(self._display_surf, missile.rect, missile.rect)
+                self.missileSprites.add(missile)
+                self.missileSprites.update()
+                self.missileSprites.draw(self._display_surf)
+                missile.fire(self.player1.rect)
 
         elif event.type == pg.KEYUP:
             self.player1.movepos = [0, 0]
@@ -132,6 +143,9 @@ class GameMaster:
         self.movePlayer()
         self.moveMissile()
         self.moveEnemy()
+        if self.APMMaximum < self.attackPlayerMissiles:
+            self.attackPlayer(self.player1.rect)
+            self.attackPlayerMissiles+=1
 
     def on_render(self):
         self.draw_background()
